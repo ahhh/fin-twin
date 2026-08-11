@@ -1,0 +1,207 @@
+{
+  "packId": "us-federal-2026",
+  "engineApi": 1,
+  "packVersion": "1.0.0",
+  "jurisdiction": { "country": "US", "level": "federal", "state": null },
+  "taxYear": 2026,
+  "effective": { "from": "2026-01-01", "to": "2026-12-31" },
+  "status": "final",
+  "lastVerified": "2026-08-11",
+  "verifiedBy": "manual",
+  "units": "cents",
+  "currency": "USD",
+
+  "sources": [
+    {
+      "label": "Rev. Proc. 2025-32 §4.01 — 2026 tax rate tables",
+      "url": "https://www.irs.gov/pub/irs-drop/rp-25-32.pdf",
+      "retrieved": "2026-08-11",
+      "note": "Authoritative source for all four bracket tables and the capital-gain breakpoints."
+    },
+    {
+      "label": "IRS — tax inflation adjustments for tax year 2026",
+      "url": "https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill",
+      "retrieved": "2026-08-11"
+    },
+    {
+      "label": "IRS — 401(k) limit increases to $24,500 for 2026",
+      "url": "https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500",
+      "retrieved": "2026-08-11"
+    },
+    {
+      "label": "SSA — 2026 contribution and benefit base",
+      "url": "https://www.ssa.gov/oact/cola/cbb.html",
+      "retrieved": "2026-08-11"
+    },
+    {
+      "label": "Rev. Proc. 2025-19 — 2026 HSA inflation-adjusted amounts",
+      "url": "https://www.irs.gov/pub/irs-drop/rp-25-19.pdf",
+      "retrieved": "2026-08-11"
+    }
+  ],
+
+  "filingStatuses": ["single", "married_joint", "married_separate", "head_of_household"],
+
+  "standardDeduction": {
+    "single": 1610000,
+    "married_separate": 1610000,
+    "married_joint": 3220000,
+    "head_of_household": 2415000
+  },
+
+  "_bracketNote": "Amounts are TAXABLE INCOME thresholds in cents. `base` is the cumulative tax at the bottom of the bracket, exactly as the Rev. Proc. prints it, so the table can be checked line-by-line against the published one. The validator asserts each base follows from the previous row. Head of household is NOT single with wider low brackets — its 24% band ends at $201,750 and its 32% at $256,200, both slightly below the single figures. Married filing separately matches single until the top bracket, which splits at $384,350.",
+
+  "ordinaryBrackets": {
+    "single": [
+      { "upTo": 1240000, "rate": 0.10, "base": 0 },
+      { "upTo": 5040000, "rate": 0.12, "base": 124000 },
+      { "upTo": 10570000, "rate": 0.22, "base": 580000 },
+      { "upTo": 20177500, "rate": 0.24, "base": 1796600 },
+      { "upTo": 25622500, "rate": 0.32, "base": 4102400 },
+      { "upTo": 64060000, "rate": 0.35, "base": 5844800 },
+      { "upTo": null, "rate": 0.37, "base": 19297925 }
+    ],
+    "married_joint": [
+      { "upTo": 2480000, "rate": 0.10, "base": 0 },
+      { "upTo": 10080000, "rate": 0.12, "base": 248000 },
+      { "upTo": 21140000, "rate": 0.22, "base": 1160000 },
+      { "upTo": 40355000, "rate": 0.24, "base": 3593200 },
+      { "upTo": 51245000, "rate": 0.32, "base": 8204800 },
+      { "upTo": 76870000, "rate": 0.35, "base": 11689600 },
+      { "upTo": null, "rate": 0.37, "base": 20658350 }
+    ],
+    "head_of_household": [
+      { "upTo": 1770000, "rate": 0.10, "base": 0 },
+      { "upTo": 6745000, "rate": 0.12, "base": 177000 },
+      { "upTo": 10570000, "rate": 0.22, "base": 774000 },
+      { "upTo": 20175000, "rate": 0.24, "base": 1615500 },
+      { "upTo": 25620000, "rate": 0.32, "base": 3920700 },
+      { "upTo": 64060000, "rate": 0.35, "base": 5663100 },
+      { "upTo": null, "rate": 0.37, "base": 19117100 }
+    ],
+    "married_separate": [
+      { "upTo": 1240000, "rate": 0.10, "base": 0 },
+      { "upTo": 5040000, "rate": 0.12, "base": 124000 },
+      { "upTo": 10570000, "rate": 0.22, "base": 580000 },
+      { "upTo": 20177500, "rate": 0.24, "base": 1796600 },
+      { "upTo": 25622500, "rate": 0.32, "base": 4102400 },
+      { "upTo": 38435000, "rate": 0.35, "base": 5844800 },
+      { "upTo": null, "rate": 0.37, "base": 10329175 }
+    ]
+  },
+
+  "_capitalGainsNote": "Rev. Proc. 2025-32 §4.03 maximum zero-rate and maximum 15% rate amounts. These are TOTAL TAXABLE INCOME thresholds, not gain thresholds: preferential income stacks on top of ordinary income, so ordinary income consumes the 0% band first.",
+  "capitalGainsBrackets": {
+    "single": [
+      { "upTo": 4945000, "rate": 0.0, "base": 0 },
+      { "upTo": 54550000, "rate": 0.15, "base": 0 },
+      { "upTo": null, "rate": 0.20, "base": 0 }
+    ],
+    "married_joint": [
+      { "upTo": 9890000, "rate": 0.0, "base": 0 },
+      { "upTo": 61370000, "rate": 0.15, "base": 0 },
+      { "upTo": null, "rate": 0.20, "base": 0 }
+    ],
+    "married_separate": [
+      { "upTo": 4945000, "rate": 0.0, "base": 0 },
+      { "upTo": 30685000, "rate": 0.15, "base": 0 },
+      { "upTo": null, "rate": 0.20, "base": 0 }
+    ],
+    "head_of_household": [
+      { "upTo": 6620000, "rate": 0.0, "base": 0 },
+      { "upTo": 57960000, "rate": 0.15, "base": 0 },
+      { "upTo": null, "rate": 0.20, "base": 0 }
+    ]
+  },
+
+  "payroll": {
+    "socialSecurity": {
+      "rateEmployee": 0.062,
+      "rateEmployer": 0.062,
+      "wageBase": 18450000
+    },
+    "medicare": {
+      "rateEmployee": 0.0145,
+      "rateEmployer": 0.0145,
+      "wageBase": null
+    },
+    "additionalMedicare": {
+      "rate": 0.009,
+      "indexed": false,
+      "_note": "Statutory thresholds, NOT inflation-indexed. Do not 'update' these each year.",
+      "threshold": {
+        "single": 20000000,
+        "married_joint": 25000000,
+        "married_separate": 12500000,
+        "head_of_household": 20000000
+      },
+      "appliesTo": ["w2_wages", "se_net_profit"],
+      "employerMatches": false,
+      "withheldByEmployerAbove": 20000000
+    }
+  },
+
+  "selfEmployment": {
+    "netEarningsFactor": 0.9235,
+    "socialSecurityRate": 0.124,
+    "medicareRate": 0.029,
+    "minimumNetEarnings": 40000,
+    "deductibleFraction": 0.5,
+    "deductibleExcludesAdditionalMedicare": true,
+    "coordinatesWithW2WageBase": true
+  },
+
+  "estimatedTax": {
+    "_note": "Due dates confirmed against the 2026 calendar; none fall on a weekend.",
+    "dueDates": ["2026-04-15", "2026-06-15", "2026-09-15", "2027-01-15"],
+    "installmentFractions": [0.25, 0.25, 0.25, 0.25],
+    "trueUpDate": "2027-04-15",
+    "filingThreshold": 100000,
+    "safeHarbor": {
+      "currentYearPct": 0.90,
+      "priorYearPct": 1.00,
+      "priorYearPctHighIncome": 1.10,
+      "highIncomeAgiThreshold": 15000000
+    }
+  },
+
+  "contributionLimits": {
+    "elective_deferral_402g": { "limit": 2450000, "catchUp50": 800000, "catchUp60_63": 1125000 },
+    "ira": { "limit": 750000, "catchUp50": 110000 },
+    "hsa": { "self": 440000, "family": 875000, "catchUp55": 100000 }
+  },
+
+  "niit": {
+    "rate": 0.038,
+    "threshold": {
+      "single": 20000000,
+      "married_joint": 25000000,
+      "married_separate": 12500000,
+      "head_of_household": 20000000
+    }
+  },
+  "_qbiNote": "Rev. Proc. 2025-32 §4.26. Threshold amounts under §199A(e)(2) and phase-in range amounts under §199A(b)(3)(B) and §199A(d)(3)(A). Head of household uses the 'all other returns' figures.",
+  "qbi": {
+    "rate": 0.20,
+    "threshold": {
+      "married_joint": 40350000,
+      "married_separate": 20177500,
+      "single": 20175000,
+      "head_of_household": 20175000
+    },
+    "phaseInTop": {
+      "married_joint": 55350000,
+      "married_separate": 27677500,
+      "single": 27675000,
+      "head_of_household": 27675000
+    },
+    "modelled": ["taxable-income-limit", "sstb-phase-out"],
+    "notModelled": ["w2-wage-limit", "unadjusted-basis-limit", "aggregation", "reit-ptp", "loss-carryforward"]
+  },
+  "credits": [],
+  "amt": null,
+
+  "rounding": { "bracketMath": "cents", "reportedLiability": "cents" },
+
+  "notes": "Estimate only, not tax advice. This pack does not model AMT, NIIT, QBI, tax credits, itemized deductions, capital-gain stacking, or any state or local tax."
+}

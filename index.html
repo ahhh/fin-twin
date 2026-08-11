@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'">
+<title>Financial Digital Twin</title>
+<meta name="description" content="A local-first tool for modelling irregular income, expenses, taxes and scenarios over a monthly timeline.">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">📈</span>
+    <h1>Financial Digital Twin</h1>
+  </div>
+  <div class="header-meta">
+    <div id="mode-slot"></div>
+    <span class="chip" id="tax-pack-chip" hidden></span>
+    <span class="chip chip-quiet" id="scenario-chip">Scenario: Base</span>
+  </div>
+</header>
+
+<div class="app-body">
+  <nav class="app-nav" aria-label="Sections">
+    <ul id="nav-list">
+      <li><button type="button" class="nav-btn" data-view="dashboard" aria-current="page">Dashboard</button></li>
+      <li><button type="button" class="nav-btn" data-view="income">Income</button></li>
+      <li><button type="button" class="nav-btn" data-view="expenses">Expenses</button></li>
+      <li><button type="button" class="nav-btn" data-view="taxes">Taxes</button></li>
+      <li><button type="button" class="nav-btn" data-view="scenarios">Scenarios</button></li>
+      <li><button type="button" class="nav-btn" data-view="assumptions">Assumptions</button></li>
+    </ul>
+  </nav>
+
+  <main id="main" class="app-main" tabindex="-1">
+    <div id="boot-status" class="notice" role="status">Loading…</div>
+    <div id="view-root"></div>
+  </main>
+</div>
+
+<footer class="app-footer">
+  <p>
+    Estimates only. This is a planning and education tool — not tax, legal, accounting or
+    investment advice, and not tax preparation software. Verify important decisions with
+    qualified professionals.
+  </p>
+  <p class="footer-privacy">Your data stays in this browser. Nothing is sent anywhere.</p>
+</footer>
+
+<div id="live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<!-- A classic script, so it still runs when module loading is blocked (file://). -->
+<script src="boot-check.js"></script>
+<!-- Vendored, hash-pinned by tests/vendor.test.js. No request leaves this origin. -->
+<script src="vendor/chart.umd.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

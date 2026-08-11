@@ -1,0 +1,17 @@
+{
+  "name": "financial-digital-twin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first financial planning and scenario modelling. Static site, no build step.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "test:tz": "TZ=Pacific/Kiritimati node --test && TZ=Pacific/Niue node --test",
+    "serve": "node tools/serve.mjs"
+  },
+  "comment": "There are no dependencies and there will not be any. Chart.js is vendored in vendor/ and hash-pinned by tests/vendor.test.js. This file exists so Node runs .js as ES modules under `node --test`; it is not a build step."
+}

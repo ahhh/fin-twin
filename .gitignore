@@ -1,0 +1,49 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.AppleDouble
+.LSOverride
+.DocumentRevisions-V100
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+Icon?
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+
+# Node
+# There are no dependencies and there will not be any — Chart.js is vendored in
+# vendor/ and hash-pinned by tests/vendor.test.js. Listed so that an accidental
+# `npm install` cannot get committed.
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.npm/
+package-lock.json
+
+# Logs and scratch
+*.log
+/scratch/
+/tmp/
+
+# YOUR FINANCIAL DATA
+# Exported models contain real income, balances and debts. Anything matching these
+# stays out of version control by default — treat an export like a bank statement.
+*.local.json
+financial-twin-*.json
+/exports/
+/private/
+
+# Test output
+/tests/golden/*.actual.json
+coverage/

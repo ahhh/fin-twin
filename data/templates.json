@@ -1,0 +1,772 @@
+{
+  "_note": "Starter models. All money is integer CENTS. `sample` marks the one loaded on a first visit \u2014 deliberately the simplest, since a first screen full of contract income and sinking funds teaches nothing. `complexity` says which mode a template needs.",
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "just-getting-started",
+      "sample": true,
+      "complexity": "simple",
+      "name": "A salary and the bills",
+      "blurb": "The starting point: what comes in, what goes out, and how long the buffer lasts.",
+      "model": {
+        "schemaVersion": 1,
+        "currency": "USD",
+        "complexity": "simple",
+        "household": {
+          "filingStatus": "single",
+          "people": [
+            {
+              "id": "p1",
+              "name": "You",
+              "birthYear": 1992
+            }
+          ],
+          "state": "",
+          "dependents": 0
+        },
+        "horizon": {
+          "startDate": "2026-01-01",
+          "years": 5
+        },
+        "openingBalances": {
+          "cash": 400000,
+          "savings": 800000
+        },
+        "liquidAccounts": [
+          "cash",
+          "savings"
+        ],
+        "emergencyTargetMonths": 3,
+        "taxReserveRate": 0,
+        "useProjectedTaxRate": false,
+        "sources": [
+          {
+            "id": "job",
+            "type": "salary",
+            "name": "My job",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "annualAmount": 7200000,
+              "frequency": "semimonthly",
+              "growthRate": 0.03,
+              "growthMode": "annual-step",
+              "federalWithholdingRate": 0.15,
+              "ficaRate": 0.0765,
+              "preTaxRate": 0.05,
+              "retirementAccount": "retirement",
+              "account": "cash",
+              "businessDayRule": "none"
+            },
+            "notes": ""
+          },
+          {
+            "id": "rent",
+            "type": "expense",
+            "name": "Rent",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 180000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "annual-step",
+              "category": "housing",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": 1,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "living",
+            "type": "expense",
+            "name": "Food, transport and bills",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 95000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "groceries",
+              "essential": true,
+              "cutPriority": 4,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "fun",
+            "type": "expense",
+            "name": "Everything else",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 60000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "personal",
+              "essential": false,
+              "cutPriority": 1,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          }
+        ],
+        "scenarios": [],
+        "goals": [],
+        "assumptions": {},
+        "priorYear": null
+      }
+    },
+    {
+      "id": "freelancer-plus-salary",
+      "name": "Freelancer with a part-time salary",
+      "blurb": "A steady part-time job, lumpy client work paid on net-45 terms, an annual insurance bill saved for monthly, and a contract that may or may not land.",
+      "model": {
+        "schemaVersion": 1,
+        "currency": "USD",
+        "household": {
+          "filingStatus": "single",
+          "people": [
+            {
+              "id": "p1",
+              "name": "You",
+              "birthYear": 1990
+            }
+          ],
+          "state": "CO",
+          "dependents": 0
+        },
+        "horizon": {
+          "startDate": "2026-01-01",
+          "years": 3
+        },
+        "openingBalances": {
+          "cash": 1800000,
+          "savings": 1200000
+        },
+        "liquidAccounts": [
+          "cash",
+          "savings"
+        ],
+        "emergencyTargetMonths": 6,
+        "taxReserveRate": 0.28,
+        "useProjectedTaxRate": true,
+        "sources": [
+          {
+            "id": "job_parttime",
+            "type": "salary",
+            "name": "Part-time role",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "annualAmount": 6200000,
+              "frequency": "semimonthly",
+              "growthRate": 0.03,
+              "growthMode": "annual-step",
+              "federalWithholdingRate": 0.12,
+              "ficaRate": 0.0765,
+              "preTaxRate": 0.06,
+              "retirementAccount": "retirement",
+              "account": "cash",
+              "businessDayRule": "none"
+            },
+            "notes": "Three days a week."
+          },
+          {
+            "id": "client_retainer",
+            "type": "contract",
+            "name": "Retainer \u2014 long-standing client",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-01-31",
+            "endDate": "2027-12-31",
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 450000,
+              "frequency": "monthly",
+              "paymentLagDays": 45,
+              "growthRate": 0,
+              "growthMode": "none",
+              "account": "cash",
+              "businessDayRule": "none",
+              "client": "Longstanding client"
+            },
+            "notes": "Invoiced month-end, paid net-45."
+          },
+          {
+            "id": "client_prospect",
+            "type": "contract",
+            "name": "Possible new project",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-09-30",
+            "endDate": "2026-09-30",
+            "certainty": {
+              "mode": "probability",
+              "confidence": 0.5,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 3500000,
+              "frequency": "once",
+              "paymentLagDays": 60,
+              "growthRate": 0,
+              "growthMode": "none",
+              "account": "cash",
+              "businessDayRule": "none",
+              "client": "Prospect"
+            },
+            "notes": "Verbal interest only. A 50% chance of $35,000 is not the same as $17,500 in the bank."
+          },
+          {
+            "id": "exp_housing",
+            "type": "expense",
+            "name": "Rent and utilities",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 235000,
+              "frequency": "monthly",
+              "inflationRate": 0.04,
+              "growthMode": "annual-step",
+              "category": "housing",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": 1,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "exp_living",
+            "type": "expense",
+            "name": "Groceries and everyday",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 95000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "groceries",
+              "essential": true,
+              "cutPriority": 4,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "exp_fun",
+            "type": "expense",
+            "name": "Going out and subscriptions",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 48000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "dining",
+              "essential": false,
+              "cutPriority": 1,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": "First thing to go if money gets tight."
+          },
+          {
+            "id": "exp_insurance",
+            "type": "expense",
+            "name": "Car insurance",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-07-15",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 240000,
+              "frequency": "annual",
+              "inflationRate": 0.05,
+              "growthMode": "annual-step",
+              "category": "insurance",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": true
+              }
+            },
+            "notes": "Saved for monthly rather than arriving as a single hit."
+          }
+        ],
+        "scenarios": [],
+        "goals": [],
+        "assumptions": {},
+        "priorYear": null
+      },
+      "complexity": "advanced"
+    },
+    {
+      "id": "single-salary",
+      "name": "One salary, one household",
+      "blurb": "The simplest case: a single job, a mortgage-sized housing cost, and steady saving.",
+      "model": {
+        "schemaVersion": 1,
+        "currency": "USD",
+        "household": {
+          "filingStatus": "single",
+          "people": [
+            {
+              "id": "p1",
+              "name": "You",
+              "birthYear": 1992
+            }
+          ],
+          "state": "",
+          "dependents": 0
+        },
+        "horizon": {
+          "startDate": "2026-01-01",
+          "years": 5
+        },
+        "openingBalances": {
+          "cash": 850000,
+          "savings": 1500000
+        },
+        "liquidAccounts": [
+          "cash",
+          "savings"
+        ],
+        "emergencyTargetMonths": 3,
+        "taxReserveRate": 0,
+        "useProjectedTaxRate": false,
+        "sources": [
+          {
+            "id": "job_main",
+            "type": "salary",
+            "name": "Main job",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "annualAmount": 9500000,
+              "frequency": "biweekly",
+              "growthRate": 0.035,
+              "growthMode": "annual-step",
+              "federalWithholdingRate": 0.16,
+              "ficaRate": 0.0765,
+              "preTaxRate": 0.08,
+              "retirementAccount": "retirement",
+              "account": "cash",
+              "businessDayRule": "none"
+            },
+            "notes": "Paid every two weeks \u2014 some years have 27 paychecks."
+          },
+          {
+            "id": "exp_home",
+            "type": "expense",
+            "name": "Housing",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 260000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "annual-step",
+              "category": "housing",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": 1,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "exp_everything",
+            "type": "expense",
+            "name": "Everything else",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 180000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "general",
+              "essential": false,
+              "cutPriority": 2,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          }
+        ],
+        "scenarios": [],
+        "goals": [],
+        "assumptions": {},
+        "priorYear": null
+      },
+      "complexity": "simple"
+    },
+    {
+      "id": "dual-income",
+      "name": "Two earners, filing jointly",
+      "blurb": "Two salaries against one return \u2014 where the Social Security wage base is per person but the Additional Medicare threshold is per household.",
+      "model": {
+        "schemaVersion": 1,
+        "currency": "USD",
+        "household": {
+          "filingStatus": "married_joint",
+          "people": [
+            {
+              "id": "p1",
+              "name": "Partner A",
+              "birthYear": 1985
+            },
+            {
+              "id": "p2",
+              "name": "Partner B",
+              "birthYear": 1987
+            }
+          ],
+          "state": "",
+          "dependents": 2
+        },
+        "horizon": {
+          "startDate": "2026-01-01",
+          "years": 5
+        },
+        "openingBalances": {
+          "cash": 2200000,
+          "savings": 4000000
+        },
+        "liquidAccounts": [
+          "cash",
+          "savings"
+        ],
+        "emergencyTargetMonths": 4,
+        "taxReserveRate": 0,
+        "useProjectedTaxRate": false,
+        "sources": [
+          {
+            "id": "job_a",
+            "type": "salary",
+            "name": "Partner A's job",
+            "enabled": true,
+            "personId": "p1",
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "annualAmount": 16500000,
+              "frequency": "semimonthly",
+              "growthRate": 0.03,
+              "growthMode": "annual-step",
+              "federalWithholdingRate": 0.19,
+              "ficaRate": 0.0765,
+              "preTaxRate": 0.1,
+              "retirementAccount": "retirement",
+              "account": "cash",
+              "businessDayRule": "none"
+            },
+            "notes": ""
+          },
+          {
+            "id": "job_b",
+            "type": "salary",
+            "name": "Partner B's job",
+            "enabled": true,
+            "personId": "p2",
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "annualAmount": 14000000,
+              "frequency": "semimonthly",
+              "growthRate": 0.03,
+              "growthMode": "annual-step",
+              "federalWithholdingRate": 0.18,
+              "ficaRate": 0.0765,
+              "preTaxRate": 0.08,
+              "retirementAccount": "retirement",
+              "account": "cash",
+              "businessDayRule": "none"
+            },
+            "notes": "Combined pay crosses the Additional Medicare threshold; neither salary does alone."
+          },
+          {
+            "id": "exp_household",
+            "type": "expense",
+            "name": "Household costs",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": null,
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 620000,
+              "frequency": "monthly",
+              "inflationRate": 0.03,
+              "growthMode": "monthly-compound",
+              "category": "housing",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": 1,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": ""
+          },
+          {
+            "id": "exp_childcare",
+            "type": "expense",
+            "name": "Childcare",
+            "enabled": true,
+            "personId": null,
+            "startDate": "2026-01-01",
+            "endDate": "2029-08-31",
+            "certainty": {
+              "mode": "fixed",
+              "confidence": 1,
+              "low": null,
+              "base": null,
+              "high": null,
+              "distribution": null,
+              "correlationGroup": null
+            },
+            "details": {
+              "amount": 240000,
+              "frequency": "monthly",
+              "inflationRate": 0.05,
+              "growthMode": "annual-step",
+              "category": "childcare",
+              "essential": true,
+              "cutPriority": 5,
+              "account": "cash",
+              "anchorDay": null,
+              "businessDayRule": "none",
+              "sinkingFund": {
+                "enabled": false
+              }
+            },
+            "notes": "Ends when the youngest starts school."
+          }
+        ],
+        "scenarios": [],
+        "goals": [],
+        "assumptions": {},
+        "priorYear": null
+      },
+      "complexity": "simple"
+    }
+  ]
+}
