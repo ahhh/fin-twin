@@ -265,7 +265,8 @@ export function scenariosView(store) {
   presetPanel.append(el('h3', { text: 'Start from a preset' }));
   presetPanel.append(el('p', {
     className: 'muted',
-    text: 'Presets write ordinary, visible changes you can read, edit or delete one at a time.',
+    text: 'Presets write ordinary, visible changes you can read, edit or delete one at a time. ' +
+      'Life events add real items — a mortgage, childcare — alongside everything else.',
   }));
 
   const presetRow = el('div', { className: 'type-row' });

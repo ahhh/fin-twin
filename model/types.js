@@ -179,6 +179,14 @@
  * `correlationGroup` are declared now and unread until Phase 6, so that adding Monte Carlo
  * changes no other type.
  *
+ * WHERE A RANGE ACTUALLY LIVES. `realize()` reads a range off the EVENT, as
+ * `meta.range = {low, base, high}` in absolute cents for that occurrence — not off these
+ * three fields. The reason is that one source produces many events of different sizes: a
+ * royalty with an escalator, or a contract mid-raise, has a different low and high at
+ * every occurrence, and a single triple on the source could not describe them. The source
+ * fields below stay the user-facing way to say it once; a compiler turns them into a
+ * per-event triple. See the two-kinds-of-uncertainty note at the top of `realize.js`.
+ *
  * @typedef {Object} Certainty
  * @property {'fixed'|'probability'|'range'} mode
  * @property {number} confidence          0..1, used by 'probability'.

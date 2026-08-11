@@ -101,11 +101,11 @@ export function advancedPrompts(model, run = null) {
 
   const types = new Set((model.sources ?? []).filter((s) => s.enabled).map((s) => s.type));
 
-  if (types.has('contract')) {
+  if ([...types].some((type) => UNWITHHELD_INCOME_TYPES.has(type))) {
     prompts.push({
       id: 'untaxed-income',
-      message: 'You have contract income, which is not taxed at source. Advanced mode ' +
-        'estimates what you will owe and how much to set aside.',
+      message: 'You have income that is not taxed at source. Advanced mode estimates what ' +
+        'you will owe and how much to set aside.',
     });
   }
   if (types.has('loan') || types.has('asset')) {
@@ -149,7 +149,21 @@ export function advancedPrompts(model, run = null) {
   return prompts;
 }
 
-const INCOME_TYPES = new Set(['salary', 'contract']);
+/**
+ * Income types with no withholding, so the tax arrives as a bill rather than a deduction.
+ *
+ * Not derived from the registry on purpose: this module imports nothing, so the level
+ * split can be asked about before any source module has loaded. The cost is that a new
+ * unwithheld income type has to be added here too, which `tests/complexity.test.js`
+ * checks for.
+ */
+const UNWITHHELD_INCOME_TYPES = new Set([
+  'contract', 'royalty', 'fixed_contract', 'investment_income',
+]);
+
+const INCOME_TYPES = new Set([
+  'salary', 'contract', 'royalty', 'fixed_contract', 'windfall', 'investment_income',
+]);
 const isIncomeType = (type) => INCOME_TYPES.has(type);
 
 /**

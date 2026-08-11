@@ -84,6 +84,63 @@ export const WARNING_CATALOGUE = Object.freeze({
     title: 'Sale has no price',
     explain: (d) => `"${d.name}" has a sale date but no sale price, so the sale is ignored.`,
   },
+  'royalty.range_inverted': {
+    severity: 'error',
+    title: 'The good statement is worse than the bad one',
+    explain: (d) =>
+      `"${d.name}" has a bad statement larger than its good one. The optimistic and ` +
+      'pessimistic runs are the wrong way round until this is fixed.',
+  },
+  'royalty.base_outside_range': {
+    severity: 'warn',
+    title: 'Typical statement sits outside the range',
+    explain: (d) =>
+      `"${d.name}" has a typical statement ${d.end === 'low' ? 'below its bad' : 'above its good'} ` +
+      'figure, so the ordinary projection is already outside the range it is meant to sit in.',
+  },
+
+  'source.unreadable_gap': {
+    severity: 'warn',
+    title: 'Some empty months could not be read',
+    explain: (d) =>
+      `"${d.name}" lists ${d.tokens} as months with no payment, which is not a month the ` +
+      'model recognises. Write them as 2027-03, or a run as 2027-06..2027-08. ' +
+      'Payments are still being counted in those months.',
+  },
+
+  'windfall.unknown_treatment': {
+    severity: 'error',
+    title: 'Unknown kind of windfall',
+    explain: (d) => `"${d.name}" is set to "${d.treatment}", which this version cannot tax, so it is ignored.`,
+  },
+  'windfall.withholding_on_untaxed': {
+    severity: 'warn',
+    title: 'Withholding on money that is not taxed',
+    explain: (d) =>
+      `"${d.name}" is ${d.kind.toLowerCase()}, which is not income, yet something is being ` +
+      'withheld from it. That would count as tax you had already paid.',
+  },
+  'windfall.withholding_without_person': {
+    severity: 'warn',
+    title: 'Withholding needs a person',
+    explain: (d) =>
+      `"${d.name}" withholds tax but is not assigned to anyone, and withholding is tracked ` +
+      'per person. The money is shown arriving whole instead.',
+  },
+
+  'investment.unknown_income_type': {
+    severity: 'error',
+    title: 'Unknown kind of investment income',
+    explain: (d) => `"${d.name}" is set to "${d.incomeType}", which this version cannot tax, so it produces nothing.`,
+  },
+  'investment.implausible_yield': {
+    severity: 'warn',
+    title: 'That yield looks like a typo',
+    explain: (d) =>
+      `"${d.name}" yields ${d.rate}% a year. If you meant ${d.rate} percentage points ` +
+      'this is right; if you typed the number without the decimal, it is a hundred times too big.',
+  },
+
   'asset.no_cost_basis': {
     severity: 'warn',
     title: 'No purchase price recorded',

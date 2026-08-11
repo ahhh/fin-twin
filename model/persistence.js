@@ -15,7 +15,10 @@ import { DEFAULT_LEVEL } from './complexity.js';
 
 /** Types that only advanced mode can fully show. Kept local to avoid importing the
  *  registry here — persistence must load even if no source module has been imported. */
-const ADVANCED_TYPES = new Set(['contract', 'transfer', 'loan', 'asset']);
+const ADVANCED_TYPES = new Set([
+  'contract', 'transfer', 'loan', 'asset',
+  'royalty', 'fixed_contract', 'windfall', 'investment_income',
+]);
 
 const hasAdvancedContent = (model) =>
   (model.sources ?? []).some((s) => ADVANCED_TYPES.has(s.type)) ||

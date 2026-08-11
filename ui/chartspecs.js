@@ -37,6 +37,12 @@ export const SERIES_ROLES = Object.freeze({
   target: { colour: '#7a6a55', label: 'Target' },
   salary: { colour: '#1f6f5c', label: 'Salary' },
   contract: { colour: '#3f7fa6', label: 'Contract' },
+  // The irregular-income categories. Distinct hues rather than shades of one, because the
+  // whole reason to stack income by source is to see which band is the unreliable one.
+  royalty: { colour: '#6b4f9e', label: 'Royalties' },
+  'fixed-contract': { colour: '#2f7f7a', label: 'Rent / fixed contract' },
+  windfall: { colour: '#a8562f', label: 'Windfall' },
+  'investment-income': { colour: '#4a6ea8', label: 'Investment income' },
   other: { colour: '#6a6f7a', label: 'Other' },
 });
 

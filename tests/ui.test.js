@@ -19,7 +19,11 @@ import {
 import {
   byUnit, dateLabel, humanise, money, moneyAxis, percent, periodLabel, signedMoney,
 } from '../ui/format.js';
-import { buildPresetOverrides, buildPresetScenario, PRESETS } from '../model/presets.js';
+import {
+  buildPresetOverrides, buildPresetScenario, buildPresetSources,
+  LIFE_EVENT_PRESETS, PRESETS,
+} from '../model/presets.js';
+import { isIncomplete } from '../model/scenarios.js';
 import { sliceModel } from './helpers/models.js';
 import { PACKS } from './helpers/packs.js';
 
@@ -206,4 +210,115 @@ test('every preset is well-formed', () => {
     assert.ok(scenario.name && scenario.description, `${key} is missing a label`);
     assert.equal(scenario.id, `preset-${key}`);
   }
+});
+
+test('every preset resolves cleanly and actually runs', () => {
+  // A preset whose override silently failed to apply is the worst outcome available: the
+  // user sees a scenario, believes they modelled a change, and gets base numbers.
+  for (const key of Object.keys(PRESETS)) {
+    const scenario = buildPresetScenario(model, key);
+    const withScenario = { ...model, scenarios: [scenario] };
+    const run = runProjection(withScenario, {
+      scenarioId: scenario.id, mode: 'expected', resolveSources,
+    });
+
+    assert.ok(!isIncomplete(run.scenarioReport ?? []), `${key} has an override that did not apply`);
+    for (const code of ['source.end_before_start', 'source.unknown_type', 'source.starts_after_horizon']) {
+      assert.ok(!run.warnings.some((w) => w.code === code),
+        `${key} generated a malformed source (${code})`);
+    }
+  }
+});
+
+test('you can only lose a job you currently have', () => {
+  // The largest salary is not necessarily the one being paid in three months' time.
+  // Ending a job before it starts makes the compiler drop it entirely, so the job-loss
+  // scenario would come out richer than the base plan.
+  const notYetStarted = {
+    ...model,
+    sources: model.sources.map((s) =>
+      (s.type === 'salary' ? { ...s, startDate: '2027-01-01', endDate: null } : s)),
+  };
+  const overrides = buildPresetOverrides(notYetStarted, 'jobLoss');
+
+  assert.equal(overrides.length, 0, 'nobody is being paid three months in, so nothing is lost');
+});
+
+/* ---- life events ---- */
+
+test('every life event costs money', () => {
+  // Not a truism worth skipping: an interruption modelled by ending a job that had not
+  // started yet REMOVES a cost, so the "harder" scenario comes out richer than the base
+  // plan. That bug is invisible unless something asserts the direction.
+  for (const key of LIFE_EVENT_PRESETS) {
+    const scenario = buildPresetScenario(model, key);
+    const withScenario = { ...model, scenarios: [scenario] };
+
+    const base = runProjection(withScenario, { mode: 'expected', resolveSources });
+    const after = runProjection(withScenario, {
+      scenarioId: scenario.id, mode: 'expected', resolveSources,
+    });
+
+    assert.ok(after.metrics.liquidCash.value < base.metrics.liquidCash.value,
+      `${key} left the household better off than doing nothing`);
+  }
+});
+
+test('a life event adds ordinary sources, editable like anything else', () => {
+  const added = buildPresetSources(model, 'mortgage');
+
+  assert.ok(added.length > 0);
+  for (const source of added) {
+    assert.ok(source.id && source.type && source.name, 'an added source is missing its identity');
+    assert.ok(source.details && source.certainty, 'an added source must have the full shape');
+    assert.match(source.notes, /scenario/i, 'the user has to be able to see where it came from');
+  }
+  assert.ok(added.some((s) => s.type === 'loan'), 'buying a house involves a mortgage');
+  assert.ok(added.some((s) => s.details.category === 'property'),
+    'and the running costs of owning, which are the part people leave out');
+});
+
+test('buying a house stops the rent', () => {
+  const overrides = buildPresetOverrides(model, 'mortgage');
+  const rent = model.sources.find((s) => s.details?.category === 'housing');
+
+  if (rent) {
+    assert.ok(overrides.some((o) => o.sourceId === rent.id && o.path === 'endDate'),
+      'paying rent and a mortgage at once would make the scenario meaningless');
+  }
+});
+
+test('unpaid leave stops the pay rather than charging an expense for it', () => {
+  // An expense the size of the missing salary would reduce cash but not taxable income,
+  // inventing a tax bill on money that was never earned.
+  const scenario = buildPresetScenario(model, 'newChild');
+  const leaveExpense = scenario.addedSources.find((s) => /leave/i.test(s.name) && s.type === 'expense');
+  assert.equal(leaveExpense, undefined, 'lost pay must not be modelled as spending');
+
+  const salaryIds = new Set(model.sources.filter((s) => s.type === 'salary').map((s) => s.id));
+  assert.ok(scenario.overrides.some((o) => salaryIds.has(o.sourceId) && o.path === 'endDate'),
+    'the salary itself has to stop');
+});
+
+test('an illness while nobody is being paid still costs what it costs', () => {
+  // The medical bills do not care whether you had a job.
+  const jobless = { ...model, sources: model.sources.filter((s) => s.type !== 'salary') };
+  const added = buildPresetSources(jobless, 'seriousIllness');
+  const overrides = buildPresetOverrides(jobless, 'seriousIllness');
+
+  assert.equal(overrides.length, 0, 'there is no income to interrupt');
+  assert.ok(added.every((s) => s.type === 'expense'));
+  assert.ok(added.some((s) => s.details.category === 'healthcare'));
+});
+
+test('a job that would have ended during the break does not come back', () => {
+  const fixedTerm = {
+    ...model,
+    sources: model.sources.map((s) =>
+      (s.type === 'salary' ? { ...s, endDate: '2026-06-30' } : s)),
+  };
+  const added = buildPresetSources(fixedTerm, 'seriousIllness');
+
+  assert.ok(!added.some((s) => /back to work/i.test(s.name)),
+    'resuming a contract that had already expired would invent income');
 });

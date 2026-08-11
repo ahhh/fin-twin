@@ -66,6 +66,15 @@ modules under `node --test`; it is not a build step.
 
 - **Multi-source cash flow** on a monthly timeline — salaried jobs (with the real 26/27
   paycheck years), contract work with payment lag and probability, expenses, transfers.
+- **The irregular-income types the tool was built for.** Royalties, reported quarterly and
+  paid a quarter later, sized as a range rather than a guess. Rent and fixed contracts with
+  the void months named rather than smeared into an average vacancy rate. Windfalls, where
+  the choice between an inheritance and a lottery win is the difference between no tax and
+  a great deal of it. Investment income split across interest, ordinary and qualified
+  dividends, and municipal interest that is never taxed.
+- **Life-event scenarios** — a child, starting a family, buying a house, serious illness.
+  These add real, editable items to the plan (a mortgage, childcare, the medical
+  out-of-pocket maximum) rather than applying a multiplier you cannot inspect.
 - **A real federal tax estimate**, driven by versioned rule packs rather than a flat rate:
   2026 brackets for all four filing statuses, standard deduction, FICA, self-employment tax
   with wage-base coordination, Additional Medicare per return, safe-harbour estimated

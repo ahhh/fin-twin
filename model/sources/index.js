@@ -19,6 +19,10 @@ import './contract.js';
 import './transfer.js';
 import './loan.js';
 import './asset.js';
+import './royalty.js';
+import './fixed-contract.js';
+import './windfall.js';
+import './investment-income.js';
 
 export {
   RegistryError,
