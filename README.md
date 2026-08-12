@@ -85,6 +85,10 @@ modules under `node --test`; it is not a build step.
   double-counting it, and say so when there was not enough runway to save.
 - **Scenarios as overrides**, with presets that write visible, editable changes.
 - **Change attribution**: every comparison explains itself, down to the last cent.
+- **A phone layout with nothing removed.** Below 720px the sidebar becomes a bottom tab
+  bar, tiles pack two-up, charts shorten, and the wide data tables pin their month column
+  while the figures scroll. Touch targets and input sizes key off `pointer: coarse`, not
+  the user agent.
 
 Not built yet: the balance sheet and loan amortisation, CPA/planner exports, Monte Carlo,
 state tax packs, capital gains, QBI.

@@ -213,6 +213,9 @@ function render(store) {
     const view = button.dataset.view;
     const allowed = available.has(view);
     button.hidden = !allowed;
+    // On a phone the nav is a tab bar whose items share the width evenly, so an item left
+    // holding a hidden button would show as a blank tab.
+    if (button.parentElement) button.parentElement.hidden = !allowed;
     if (allowed && view === currentView) button.setAttribute('aria-current', 'page');
     else button.removeAttribute('aria-current');
   }

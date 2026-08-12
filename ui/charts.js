@@ -91,7 +91,9 @@ function markerPlugin(spec) {
 export function renderChart(spec, { height = 260 } = {}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'chart-canvas';
-  wrapper.style.height = `${height}px`;
+  // A custom property rather than `height` directly, so the phone layout can shrink the
+  // chart in CSS without having to out-specify an inline style.
+  wrapper.style.setProperty('--chart-h', `${height}px`);
 
   const canvas = document.createElement('canvas');
   canvas.setAttribute('role', 'img');

@@ -28,12 +28,15 @@ class FakeNode {
     this.listeners = new Map();
     this._text = '';
     this.classList = new ClassList(this);
-    this.style = {};
+    // Enough of CSSStyleDeclaration for the renderers: assignment and custom properties.
+    this.style = { setProperty(name, value) { this[name] = value; } };
     this.checked = false;
     this.selected = false;
     this.value = '';
     this.files = null;
   }
+
+  get parentElement() { return this.parent; }
 
   get className() { return this.classList.toString(); }
   set className(value) {
