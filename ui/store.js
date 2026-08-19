@@ -7,7 +7,10 @@
 
 import { runProjection } from '../model/engine.js';
 import { resolveSources } from '../model/scenarios.js';
-import { createStore, emptyModel, exportJson, importJson } from '../model/persistence.js';
+import {
+  createStore, emptyModel, exportEncrypted, exportJson, importAny, importJson,
+  isEncryptedExport,
+} from '../model/persistence.js';
 import { digest } from '../model/hash.js';
 import { COMPARISON_MODES, hasUncertainty } from '../model/realize.js';
 import { LEVELS } from '../model/complexity.js';
@@ -155,6 +158,21 @@ export function createAppStore({ storage, packs = [] } = {}) {
 
     exportJson: () => exportJson(model),
     importJson: (text) => api.setModel(importJson(text)),
+
+    /** The same export, sealed with a password. Async because key derivation is. */
+    exportEncrypted: (password) => exportEncrypted(model, password),
+
+    isEncryptedExport,
+
+    /**
+     * Import a file of either kind.
+     *
+     * A failed decryption must leave the current model alone — hence the await before
+     * `setModel`, rather than a `.then` that could half-apply.
+     */
+    async importAny(text, password = null) {
+      return api.setModel(await importAny(text, password));
+    },
   };
 
   return api;

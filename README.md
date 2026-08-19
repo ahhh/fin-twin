@@ -19,7 +19,7 @@ of this money is actually mine after tax*.
 > authoritative sources and qualified professionals.
 >
 > By default, data is stored locally in your browser. Exported files may contain sensitive
-> financial information; store them securely.
+> financial information; store them securely, or use the password-encrypted export.
 
 ## Running it locally
 
@@ -85,6 +85,10 @@ modules under `node --test`; it is not a build step.
   double-counting it, and say so when there was not enough runway to save.
 - **Scenarios as overrides**, with presets that write visible, editable changes.
 - **Change attribution**: every comparison explains itself, down to the last cent.
+- **Password-encrypted exports.** *Export encrypted…* seals the file with a password —
+  AES-256-GCM under a PBKDF2-SHA-256 key at 600,000 rounds, all through the browser's own
+  WebCrypto, so no dependency is added and no key ever leaves the tab. Import detects which
+  kind of file it has and only asks for a password when there is something to unlock.
 - **A phone layout with nothing removed.** Below 720px the sidebar becomes a bottom tab
   bar, tiles pack two-up, charts shorten, and the wide data tables pin their month column
   while the figures scroll. Touch targets and input sizes key off `pointer: coarse`, not
@@ -110,6 +114,33 @@ See `model/types.js` for the written data model, and the plan in
 
 Stored in this browser's `localStorage` and nowhere else. That also means **one cleared-site-data
 click and it is gone.** Export your model to JSON regularly and keep it in your own backups.
+
+### Encrypted exports
+
+An export is a bank statement in JSON form, and backups end up in shared drives. *Export
+encrypted…* asks for a password and produces a file that is still `.json` — a file picker
+takes it, and you can open it and see what it is — but whose contents are ciphertext:
+
+| Layer | Choice | Why |
+|---|---|---|
+| Key derivation | PBKDF2-HMAC-SHA-256, 600,000 rounds, random 16-byte salt | A bare digest of a password is guessable at billions of tries a second. The iteration count is the defence; the salt is what stops one cracking run opening every file. |
+| Encryption | AES-256-GCM, random 12-byte IV per file | Counter mode — the content is XORed with a keystream, once, under a never-reused IV. GCM's tag means a corrupted or edited file fails loudly instead of decrypting into plausible-looking numbers. |
+| Header | Cipher, IV and KDF parameters stored in the clear, authenticated as GCM additional data | They are needed to derive the key, so they cannot be secret — but nobody can quietly rewrite `iterations: 600000` down to `1` in a file and hand it back. |
+
+The password is never stored, never persisted, and never recoverable. **If you lose it, the
+file is gone** — there is no reset, by design.
+
+Two things this does *not* do, and should not be read as doing:
+
+- **`localStorage` is still plaintext.** The password protects files you export, not the
+  working copy in the browser. Anyone with your unlocked machine can read that.
+- **Your password is the whole strength.** 600,000 PBKDF2 rounds makes each guess expensive;
+  it does not make `password1` a good passphrase. The prompt asks for at least eight
+  characters, which is a floor, not a recommendation.
+
+`crypto.subtle` is only exposed in a secure context, so encryption is available over
+`https://` and on `localhost` — not from a plain-`http://` origin, where the app says so
+rather than silently falling back to something weaker.
 
 ## Licence
 

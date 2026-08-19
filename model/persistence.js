@@ -12,6 +12,7 @@
 
 import { todayISO } from './dates.js';
 import { DEFAULT_LEVEL } from './complexity.js';
+import { decryptText, encryptText, isEnvelope } from './crypto.js';
 
 /** Types that only advanced mode can fully show. Kept local to avoid importing the
  *  registry here — persistence must load even if no source module has been imported. */
@@ -260,7 +261,7 @@ export function exportJson(model) {
   );
 }
 
-export function importJson(text) {
+function parseExport(text) {
   let parsed;
   try {
     parsed = JSON.parse(text);
@@ -273,15 +274,78 @@ export function importJson(text) {
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new PersistenceError('persist.not_a_model', 'that file does not contain a model');
   }
+  return parsed;
+}
+
+export function importJson(text) {
+  const parsed = parseExport(text);
+
+  // An encrypted file is valid JSON and an object, so it would otherwise fall through to
+  // `migrate` and be rejected as "not a model" — which tells the user nothing about the
+  // one thing they need to do.
+  if (isEnvelope(parsed)) {
+    throw new PersistenceError('persist.encrypted',
+      'that file is encrypted. Enter the password it was exported with.');
+  }
 
   // Round-tripping must not resurrect export-only fields as model data.
   const { exportedAt, _warning, ...model } = parsed;
   return migrate(model);
 }
 
+/* ---- encrypted export ---- */
+
+/**
+ * The same JSON an ordinary export produces, sealed with a password.
+ *
+ * Encrypting the finished export rather than the model means the two paths cannot drift:
+ * whatever a plain export contains, an encrypted one contains, and it decrypts straight
+ * back into `importJson`.
+ */
+export async function exportEncrypted(model, password) {
+  const envelope = await encryptText(exportJson(model), password);
+  return JSON.stringify(
+    {
+      ...envelope,
+      exportedAt: todayISO(),
+      _warning:
+        'This file is an encrypted Financial Digital Twin model. It can only be opened ' +
+        'with the password it was exported with — there is no recovery and no reset. ' +
+        'Nobody, including the app, can read it without that password.',
+    },
+    null,
+    2,
+  );
+}
+
+/** True if this text is an encrypted export. Never throws: unreadable input is just "no". */
+export function isEncryptedExport(text) {
+  try {
+    return isEnvelope(JSON.parse(text));
+  } catch {
+    return false;
+  }
+}
+
+/** Decrypt, then import. Rejects with a `crypto.*` code when the password is wrong. */
+export async function importEncrypted(text, password) {
+  const envelope = parseExport(text);
+  return importJson(await decryptText(envelope, password));
+}
+
+/**
+ * Import either kind of file.
+ *
+ * The caller usually does not know which it has until it has read it, and asking for a
+ * password before knowing one is needed is a worse experience than asking after.
+ */
+export async function importAny(text, password = null) {
+  return isEncryptedExport(text) ? importEncrypted(text, password) : importJson(text);
+}
+
 /** A filename that sorts chronologically and says what it is. */
-export function exportFilename(date = todayISO()) {
-  return `financial-twin-${date}.json`;
+export function exportFilename(date = todayISO(), { encrypted = false } = {}) {
+  return `financial-twin-${date}${encrypted ? '.encrypted' : ''}.json`;
 }
 
 /**

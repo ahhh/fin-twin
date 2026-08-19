@@ -251,7 +251,8 @@ h3 { font-size: 1rem; }
 }
 .toolbar label { color: var(--text-quiet); font-size: 0.85rem; }
 
-button, select, input[type="text"], input[type="number"], input[type="date"] {
+button, select,
+input[type="text"], input[type="number"], input[type="date"], input[type="password"] {
   font: inherit;
   color: var(--text);
   background: var(--surface);
@@ -265,6 +266,45 @@ button.danger { color: var(--negative); border-color: var(--negative); }
 button.danger:hover { background: var(--error-bg); }
 
 .banner { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ---- password dialog ---- */
+
+/* A `<dialog>` has no default look worth keeping, and the browser's own backdrop is
+   transparent until it is told otherwise. */
+.password-dialog {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0;
+  /* min() rather than a plain max-width: on a narrow phone the margin still applies. */
+  width: min(26rem, calc(100vw - 2rem));
+}
+.password-dialog::backdrop { background: rgb(0 0 0 / 45%); }
+
+.password-body { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.1rem 1.2rem; }
+.password-body h2 { margin: 0; font-size: 1.1rem; }
+.password-body p { margin: 0; }
+.password-body label { font-size: 0.85rem; color: var(--text-quiet); margin-top: 0.3rem; }
+.password-body input { width: 100%; box-sizing: border-box; }
+
+/* Always in the DOM so the alert region exists before it has anything to say — a node
+   inserted at the same moment as its text is not reliably announced. */
+.password-error {
+  color: var(--negative);
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+.password-error:empty { min-height: 0; }
+
+.password-actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.6rem; }
+.password-actions .primary {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+.password-actions .primary:hover { filter: brightness(1.08); background: var(--accent); }
+.password-actions .quiet { color: var(--text-quiet); }
 
 /* ---- panels ---- */
 
@@ -559,11 +599,15 @@ button.danger:hover { background: var(--error-bg); }
    focus without zooming the whole page in and stranding the user mid-form. */
 
 @media (pointer: coarse) {
-  button, select, input[type="text"], input[type="number"], input[type="date"] {
+  button, select,
+input[type="text"], input[type="number"], input[type="date"], input[type="password"] {
     min-height: 44px;
     padding: 0.5rem 0.75rem;
   }
-  select, input[type="text"], input[type="number"], input[type="date"] { font-size: 16px; }
+  select,
+  input[type="text"], input[type="number"], input[type="date"], input[type="password"] {
+    font-size: 16px;
+  }
 
   /* Both of these size themselves; the floor above would only bloat them. */
   .mode-button { min-height: 40px; padding: 0.3rem 0.9rem; }

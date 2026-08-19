@@ -13,6 +13,7 @@ import { isAdvanced, viewsFor } from './model/complexity.js';
 import { exportFilename, loadSampleTemplate } from './model/persistence.js';
 import { destroyAllCharts } from './ui/charts.js';
 import { el } from './ui/tables.js';
+import { askForPassword } from './ui/password.js';
 import {
   assumptionsView, dashboardView, scenariosView, sourcesView, taxesView,
 } from './ui/views.js';
@@ -137,6 +138,52 @@ function renderComplexityToggle(store) {
   return wrap;
 }
 
+/** Hand the browser a file. Same path for both kinds of export. */
+function downloadText(text, filename) {
+  const blob = new Blob([text], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = el('a', { href: url, download: filename });
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Import a file of either kind, asking for a password only once we know one is needed.
+ *
+ * The retry loop matters: a mistyped password is the expected case, and making the user
+ * re-pick the file each time would be a small cruelty.
+ */
+async function importFile(store, text) {
+  if (!store.isEncryptedExport(text)) {
+    store.importJson(text);
+    announce('Model imported.');
+    return;
+  }
+
+  for (;;) {
+    const password = await askForPassword({
+      title: 'This file is encrypted',
+      message: 'Enter the password it was exported with.',
+      submitLabel: 'Decrypt and import',
+    });
+    if (!password) {
+      announce('Import cancelled.');
+      return;
+    }
+
+    announce('Decrypting. This takes a moment.');
+    try {
+      await store.importAny(text, password);
+      announce('Encrypted model imported.');
+      return;
+    } catch (err) {
+      // A wrong password is worth another try; a corrupt or unsupported file is not.
+      if (err.code !== 'crypto.wrong_password') throw err;
+      alert(err.message);
+    }
+  }
+}
+
 function renderToolbar(store) {
   const bar = el('div', { className: 'toolbar' });
 
@@ -156,12 +203,42 @@ function renderToolbar(store) {
 
   const exportBtn = el('button', { type: 'button', text: 'Export JSON' });
   exportBtn.addEventListener('click', () => {
-    const blob = new Blob([store.exportJson()], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = el('a', { href: url, download: exportFilename() });
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadText(store.exportJson(), exportFilename());
     announce('Model exported. It contains personal financial information — store it securely.');
+  });
+
+  const encryptBtn = el('button', {
+    type: 'button',
+    text: 'Export encrypted…',
+    title: 'Export a file that only opens with a password you choose.',
+  });
+  encryptBtn.addEventListener('click', async () => {
+    const password = await askForPassword({
+      title: 'Encrypt this export',
+      message:
+        'The file will only open with this password. It is not stored anywhere and it ' +
+        'cannot be reset or recovered — if you lose it, the file is gone.',
+      confirm: true,
+      submitLabel: 'Encrypt and download',
+    });
+    if (!password) return;
+
+    // Key derivation is deliberately slow — around a second on a phone. Say so, rather
+    // than letting the button look dead.
+    encryptBtn.disabled = true;
+    const label = encryptBtn.textContent;
+    encryptBtn.textContent = 'Encrypting…';
+    announce('Encrypting your model. This takes a moment.');
+    try {
+      const text = await store.exportEncrypted(password);
+      downloadText(text, exportFilename(undefined, { encrypted: true }));
+      announce('Encrypted model exported. Keep the password safe — it cannot be recovered.');
+    } catch (err) {
+      alert(`That export could not be encrypted: ${err.message}`);
+    } finally {
+      encryptBtn.disabled = false;
+      encryptBtn.textContent = label;
+    }
   });
 
   const importBtn = el('button', { type: 'button', text: 'Import JSON' });
@@ -170,8 +247,7 @@ function renderToolbar(store) {
     const file = picker.files?.[0];
     if (!file) return;
     try {
-      store.importJson(await file.text());
-      announce('Model imported.');
+      await importFile(store, await file.text());
     } catch (err) {
       alert(`That file could not be imported: ${err.message}`);
     }
@@ -186,7 +262,7 @@ function renderToolbar(store) {
     announce('Local data deleted.');
   });
 
-  bar.append(exportBtn, importBtn, picker, resetBtn);
+  bar.append(exportBtn, encryptBtn, importBtn, picker, resetBtn);
   return bar;
 }
 
